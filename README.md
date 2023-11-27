@@ -1,5 +1,10 @@
 # Official implementation of "AvatarGPT: All-in-One Framework for Motion Understanding, Planning, Generation and Beyond"
 
+
+### [Project Website](https://zixiangzhou916.github.io/AvatarGPT/)
+
+---
+
 ![plot](./assets/teaser.png)
 
 ## Abstract
