@@ -1,7 +1,7 @@
 # Official implementation of "AvatarGPT: All-in-One Framework for Motion Understanding, Planning, Generation and Beyond"
 
 
-### [Project Website](https://zixiangzhou916.github.io/AvatarGPT/)
+### [Arxiv](https://arxiv.org/abs/2311.16468) | [Project Website](https://zixiangzhou916.github.io/AvatarGPT/)
 
 ---
 
