@@ -19,3 +19,11 @@
 
 ## Code
 #### Coming soon
+
+## Citation
+@article{zhou2023avatargpt, \
+$\qquad$  title={AvatarGPT: All-in-One Framework for Motion Understanding, Planning, Generation and Beyond}, \
+$\qquad$  author={Zhou, Zixiang and Wan, Yu and Wang, Baoyuan}, \
+$\qquad$  journal={arXiv preprint arXiv:2311.16468}, \
+$\qquad$  year={2023} \
+}
