@@ -3,6 +3,10 @@
 
 ### [Project Website](https://zixiangzhou916.github.io/AvatarGPT/)
 
+💥💥💥 Our work is accepted by CVPR2024
+
+⏩⏩⏩ Code will be released in coming weeks, stay tuned
+
 ---
 
 ![plot](./assets/teaser.png)
