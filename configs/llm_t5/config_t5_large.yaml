@@ -1,0 +1,155 @@
+data:
+  dataset:
+    t2m_base_dir: ../../dataset/HumanML3D/
+    t2m_motion_dir: ../../dataset/HumanML3D/new_joint_vecs
+    text_dir: ../../dataset/HumanML3D/texts/
+    std_dir: "pretrained_models/vqvae/std.npy"
+    mean_dir: "pretrained_models/vqvae/mean.npy"
+    meta_mode: t2m-gpt   # 1. tm2t, 2. t2m-gpt
+    feat_bias: 5
+    joints_num: 22
+    t2m_max_text_len: 30
+    read_mirrors: true            # If true, load the mirrored data as well, default: True
+    read_augmented_texts: false   # If true, load augmented textual descriptions, default: False
+
+    t2t_text_dir: demo_inputs/samples
+    
+    variable_lengths: true  # If True, we are using variable lengths for HumanML3D, default: False
+    decompose_actions: true # If True, we read decomposed action descriptions
+    
+    times: 1
+    window_size:
+      a2m: 60
+      t2m: 200
+    modality: ["t2t"]
+  
+  loader:
+    train:
+      dataset: AvatarGPTHMLDataset
+      shuffle: true
+      split:
+        t2m: train
+        t2t: train
+      split_path:
+        t2m: ../../dataset/HumanML3D/
+        t2t: ../../dataset/VideoCaptionData_chatgpt/
+      workers: 4
+      batch_size: 8   # 8
+    vald:
+      dataset: AvatarGPTHMLDataset
+      shuffle: True
+      split:
+        t2m: val
+        t2t: val
+      split_path:
+        t2m: ../../dataset/HumanML3D/
+        t2t: ../../dataset/VideoCaptionData_chatgpt/
+      workers: 4
+      batch_size: 8   # 8
+    test:
+      dataset: AvatarGPTEvalHMLDataset
+      shuffle: false
+      split:
+        t2m: test
+        t2t: test
+      split_path:
+        t2m: ../../dataset/HumanML3D/
+        t2t: demo_inputs
+      workers: 0
+      batch_size: 1
+
+train:
+  num_epochs: 1000
+  weight_decay: 0.00
+  optimizer: "AdamW"
+  lr: 0.0002
+  betas: [0.9, 0.999]
+  gamma: 0.1
+  step_lr: 500
+  eval_per_epoch: 1000
+  save_per_epoch: 10
+  model_to_train: ["gpt"]
+  tasks: ["t2m", "m2t", "m2m", "dm"]          # 1. pre, 2. t2m, 3. m2t, 4. m2m
+  grad_accumulation: True
+  num_accumulation_steps: 1
+
+  checkpoints:
+    vqvae:
+      t2m:
+        body: "networks/vqvae/pretrained/net_reorganized.pth"
+    gpt: "logs/avatar_gpt/flan_t5_large/exp6-instruct/23-11-01-09-24-13/checkpoints/gpt/AvatarGPT_E0030"
+
+eval:
+  checkpoints:
+    vqvae:
+      t2m:
+        body: "pretrained_models/vqvae/net_best.pth"
+    gpt: "pretrained_models/avatar_gpt"  # t2m, m2t, m2m, t2t, se
+
+losses:
+  cond: 1.0
+  pred: 1.0
+
+lambda:
+  t2m: 1.0
+  m2t: 1.0
+  m2m: 1.0
+  dm: 1.0
+
+models:
+  vqvae:
+    t2m:
+      body:
+        vqencoder:
+          arch_path: '.vqvae.vq_encoder'
+          arch_name: 'VQEncoderHML'
+          input_emb_width: 263 
+          output_emb_width: 512 
+          down_t: 2
+          stride_t: 2 
+          width: 512 
+          depth: 3 
+          dilation_growth_rate: 3 
+          activation: 'relu'
+          norm: none
+        vqdecoder:
+          arch_path: '.vqvae.vq_decoder'
+          arch_name: 'VQDecoderHML'              # V1: Conv, V2: Conv + Transformer
+          input_emb_width: 263
+          output_emb_width: 512
+          down_t: 2
+          stride_t: 2
+          width: 512 
+          depth: 3
+          dilation_growth_rate: 3
+          activation: 'relu'
+          norm: none
+        quantizer:
+          arch_path: '.vqvae.quantizer'
+          arch_name: 'QuantizeEMAReset'
+          nb_code: 512
+          code_dim: 512
+          mu: 0.99
+          beta: 1.0
+  gpt:
+    arch_path: '.llm.t5_model'
+    arch_name: 'AvatarGPT'
+    model_type: 't5'  # 1. t5, 2. gpt, 3. llama
+    tokenizer: 'pretrained_models/llm/flan-t5-large/tokenizer'
+    model: 'pretrained_models/llm/flan-t5-large/model'
+    add_motion_token_type: 'mlp'  # 1. token, 2. mlp
+    head_type: 'separate'             # 1. shared, 2. separate
+    n_motion_tokens: 512
+    d_motion_embeds: 512
+    d_model: 1024    # model dimension of T5
+    m_token_len: 52
+
+    tokenizer_config:
+      max_length: 256
+      pad_to_max_length: True
+      truncation: True
+      padding: "max_length"
+      add_special_tokens: True
+      return_attention_mask: True
+      return_token_type_ids: False
+      return_tensors: "pt"
