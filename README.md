@@ -24,7 +24,8 @@
 ## TODO
 #### ✅ Release the demo code.
 #### ✅ Release the pretrained weights and sample data.
-#### ⬜ Release the code for training, evaluation, and constructing dataset of high-level tasks.
+#### ✅ Release the data curation pipeline. 
+#### ⬜ Release the code for training, evaluation.
 
 ## Play with AvatarGPT
 #### Prepare pretrained weights, the weights could be downloaded [here](https://drive.google.com/drive/folders/14TQCPLByNeXIixkPWCjLltSrIhP1JcE4?usp=sharing). After downloading, unzip the files, the weights will be placed under
@@ -47,6 +48,12 @@
 
 #### You can run the following script to generate long motion sequences under certain scenario. It will also animate the generated motion.
     sh demo.sh
+
+#### You can construct your own dataset for training high-level tasks. The data curation pipeline contains three steps: 
+
+1. Download videos that match your demands.
+2. Generate detail video content descriptions using [Ask-Anything](https://github.com/OpenGVLab/Ask-Anything). For convenience, we provide a sample video and you can follow [this](data_curation_pipeline/Ask-Anything/README.md) to setup the environment and run the model.
+3. After the video content descriptions are prepared, you can generate descriptions of various level of granurality using [ChatGPT](https://openai.com/chatgpt) by following [this](data_curation_pipeline/ChatGPT/README.md). Please make sure you have a valid ChatGPT API key.
 
 
 ## Citation
